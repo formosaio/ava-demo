@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --demo-scale: 1;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-quinyx: #0F6E56;
+  --font-sans: var(--font-geist-sans);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* ── App fade-in on load ─────────────────────────────────────── */
+
+@keyframes app-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-app-in {
+  animation: app-fade-in 600ms ease-out both;
+}
+
+/* ── Chat message entrance ───────────────────────────────────── */
+
+@keyframes message-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-message-in {
+  animation: message-in 200ms ease-out both;
+}
+
+/* ── Card stagger entrance ───────────────────────────────────── */
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-card-in {
+  animation: card-in 200ms ease-out both;
+}
+
+/* ── Typing indicator fade-in ────────────────────────────────── */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fade-in 300ms ease-out both;
+}
+
+/* ── Typing indicator dot pulse ──────────────────────────────── */
+
+@keyframes dot-pulse {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-dot-1 { animation: dot-pulse 1.4s ease-in-out infinite; }
+.animate-dot-2 { animation: dot-pulse 1.4s ease-in-out 0.2s infinite; }
+.animate-dot-3 { animation: dot-pulse 1.4s ease-in-out 0.4s infinite; }
+
+/* ── Online pulse ────────────────────────────────────────────── */
+
+@keyframes online-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+
+.animate-online-pulse {
+  animation: online-pulse 2s ease-in-out infinite;
+}
+
+/* ── Vignette overlay for fullscreen ─────────────────────────── */
+
+.vignette::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+}
+
+/* ── Hide scrollbar on chip rows ─────────────────────────────── */
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
