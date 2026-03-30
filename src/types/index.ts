@@ -175,6 +175,148 @@ export interface ComplianceRules {
   sundayWorking: string;
 }
 
+// ── Employer domain types ──────────────────────────────────────
+
+export interface ManagerProfile {
+  name: string;
+  role: string;
+  employer: string;
+  region: string;
+  stores: number;
+  totalEmployees: number;
+  directReports: number;
+}
+
+export interface StoreData {
+  name: string;
+  slug: string;
+  manager: string;
+  headcount: number;
+  revenuePerLabourHour: number;
+  labourCostPct: number;
+  complianceScore: number;
+  turnover90d: number;
+  scheduleNoticeDays: number;
+  preferenceMatchRate: number;
+  trainingCompletion: number;
+  avgWeeklyHoursPerEmployee: number;
+  openShiftsThisWeek: number;
+  overtimeHoursThisWeek: number;
+}
+
+export interface NetworkBenchmarks {
+  avgLabourCostPct: number;
+  avgComplianceScore: number;
+  avgTurnover90d: number;
+  avgScheduleNoticeDays: number;
+  avgPreferenceMatchRate: number;
+  avgTrainingCompletion: number;
+  avgRevenuePerLabourHour: number;
+}
+
+export interface NetworkInsight {
+  insight: string;
+  confidence: "high" | "medium" | "low";
+  sampleSize: number;
+  appliesTo: string[];
+}
+
+export type AlertSeverity = "high" | "medium" | "low";
+
+export interface ComplianceAlert {
+  severity: AlertSeverity;
+  store: string;
+  title: string;
+  detail: string;
+  recommendation: string;
+}
+
+export interface RegionSummary {
+  totalEmployees: number;
+  totalLabourCostPct: number;
+  overallComplianceScore: number;
+  overallTurnover90d: number;
+  scheduleFillRate: number;
+  totalOpenShifts: number;
+  totalOvertimeHours: number;
+  period: string;
+}
+
+export interface CostOfTurnover {
+  avgRecruitmentCost: number;
+  avgTrainingCost: number;
+  avgProductivityLossWeeks: number;
+  avgCostPerLeaver: number;
+  note: string;
+}
+
+// ── Employer card types ────────────────────────────────────────
+
+export type EmployerCardType =
+  | "store_comparison"
+  | "compliance_alert"
+  | "network_insight"
+  | "cost_analysis"
+  | "staffing_overview"
+  | "action_item";
+
+export interface EmployerCardData {
+  type: EmployerCardType;
+  data: Record<string, unknown>;
+}
+
+export interface StoreComparisonData {
+  stores: {
+    name: string;
+    metric: string;
+    value: number | string;
+    benchmark: number | string;
+  }[];
+  metric_label: string;
+  insight: string;
+}
+
+export interface ComplianceAlertCardData {
+  severity: "high" | "medium" | "low";
+  store: string;
+  title: string;
+  detail: string;
+  recommendation: string;
+}
+
+export interface NetworkInsightCardData {
+  insight: string;
+  confidence: "high" | "medium" | "low";
+  sample_size: number;
+  your_stores_affected: string[];
+  potential_impact: string;
+}
+
+export interface CostAnalysisData {
+  scenario: string;
+  current_cost: string;
+  projected_saving: string;
+  timeframe: string;
+  assumptions: string;
+}
+
+export interface StaffingOverviewData {
+  store: string;
+  open_shifts: number;
+  overtime_hours: number;
+  headcount: number;
+  fill_rate: number;
+  recommendation: string;
+}
+
+export interface ActionItemData {
+  priority: "urgent" | "important" | "suggested";
+  action: string;
+  store: string;
+  expected_outcome: string;
+  effort: "low" | "medium" | "high";
+}
+
 // ── API types ──────────────────────────────────────────────────
 
 export interface ChatRequest {

@@ -21,22 +21,7 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
 
-      // Fullscreen toggle
-      if (e.key === "f" && !e.metaKey && !e.ctrlKey && !e.altKey) {
-        if (document.fullscreenElement) {
-          document.exitFullscreen();
-        } else {
-          document.documentElement.requestFullscreen();
-        }
-        return;
-      }
-
-      if (e.key === "Escape" && document.fullscreenElement) {
-        document.exitFullscreen();
-        return;
-      }
-
-      // Scale shortcuts
+      // Scale shortcuts (phone-frame specific)
       if ((e.key === "=" || e.key === "+") && !e.metaKey && !e.ctrlKey) {
         adjustScale(0.1);
         return;
@@ -66,7 +51,7 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
 
   return (
     <div
-      className={`animate-app-in relative flex min-h-screen flex-col items-center justify-center bg-[#0A0A0A] ${
+      className={`animate-page-enter relative flex min-h-screen flex-col items-center justify-center bg-[#0A0A0A] ${
         isFullscreen ? "vignette" : ""
       }`}
     >
@@ -82,7 +67,6 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
             "0 0 0 1px rgba(255,255,255,0.04), 0 40px 80px rgba(0,0,0,0.6), 0 0 120px rgba(0,0,0,0.4)",
           padding: 4,
           transform: `scale(${scale})`,
-          /* Light-catch highlight: top-left edge lighter */
           borderTop: "1px solid rgba(255,255,255,0.12)",
           borderLeft: "1px solid rgba(255,255,255,0.08)",
           borderRight: "1px solid #333",
@@ -124,17 +108,6 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
       >
         Quinyx
       </p>
-
-      {/* Fullscreen hint + scale indicator */}
-      {!isFullscreen && (
-        <span
-          className="absolute bottom-4 left-4 z-10 select-none text-white"
-          style={{ fontSize: 12, opacity: 0.2 }}
-        >
-          Press F for fullscreen &middot; +/− to scale
-          {scale !== 1 && ` (${Math.round(scale * 100)}%)`}
-        </span>
-      )}
     </div>
   );
 }
