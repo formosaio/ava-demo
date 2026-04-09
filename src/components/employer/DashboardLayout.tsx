@@ -222,7 +222,7 @@ export function DashboardLayout() {
 
 function KpiChip({ label, value, good }: { label: string; value: string; good: boolean }) {
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-1.5 whitespace-nowrap">
       <span className="text-[11px] text-gray-400">{label}</span>
       <span className={`text-[13px] font-semibold tabular-nums ${good ? "text-green-600" : "text-amber-600"}`}>
         {value}
