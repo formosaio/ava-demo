@@ -31,6 +31,7 @@ export function PerformanceTab({ store, benchmarks }: PerformanceTabProps) {
         metric="labourCostPct"
         label="Labour cost % revenue"
         format={(v) => `${v.toFixed(1)}%`}
+        lowerIsBetter
       />
 
       {/* Ava "Why" insight */}

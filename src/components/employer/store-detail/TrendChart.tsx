@@ -9,9 +9,21 @@ interface TrendChartProps {
   metric: "revenuePerHour" | "labourCostPct" | "complianceScore";
   label: string;
   format: (v: number) => string;
+  lowerIsBetter?: boolean;
 }
 
-export function TrendChart({ storeData, costaAvg, networkAvg, metric, label, format }: TrendChartProps) {
+// RAG: compare store value to network benchmark
+function ragColour(value: number, benchmark: number, lowerIsBetter: boolean): string {
+  const diff = lowerIsBetter ? benchmark - value : value - benchmark;
+  const pct = diff / benchmark;
+  if (pct > 0.03) return "#16a34a"; // green
+  if (pct > -0.05) return "#d97706"; // amber
+  return "#dc2626"; // red
+}
+
+const COSTA_BLUE = "#4b8bf5";
+
+export function TrendChart({ storeData, costaAvg, networkAvg, metric, label, format, lowerIsBetter = false }: TrendChartProps) {
   const allValues = [
     ...storeData.map((d) => d[metric]),
     ...costaAvg.map((d) => d[metric]),
@@ -26,7 +38,7 @@ export function TrendChart({ storeData, costaAvg, networkAvg, metric, label, for
   const chartRange = chartMax - chartMin;
 
   const chartH = 160;
-  const chartW = 100; // percentage-based
+  const chartW = 100;
 
   function toY(value: number): number {
     return chartH - ((value - chartMin) / chartRange) * chartH;
@@ -40,6 +52,22 @@ export function TrendChart({ storeData, costaAvg, networkAvg, metric, label, for
         return `${x},${y}`;
       })
       .join(" ");
+  }
+
+  // Build RAG-coloured line segments for the store
+  const storeSegments: { x1: number; y1: number; x2: number; y2: number; colour: string }[] = [];
+  for (let i = 0; i < storeData.length - 1; i++) {
+    const x1 = (i / (storeData.length - 1)) * chartW;
+    const y1 = toY(storeData[i][metric]);
+    const x2 = ((i + 1) / (storeData.length - 1)) * chartW;
+    const y2 = toY(storeData[i + 1][metric]);
+    // Use the midpoint value for colour
+    const midVal = (storeData[i][metric] + storeData[i + 1][metric]) / 2;
+    const benchVal = networkAvg[i][metric];
+    storeSegments.push({
+      x1, y1, x2, y2,
+      colour: ragColour(midVal, benchVal, lowerIsBetter),
+    });
   }
 
   return (
@@ -65,7 +93,7 @@ export function TrendChart({ storeData, costaAvg, networkAvg, metric, label, for
               />
             ))}
 
-            {/* Network avg — dashed line */}
+            {/* Network avg — dashed grey line */}
             <polyline
               points={toPoints(networkAvg)}
               fill="none"
@@ -75,30 +103,34 @@ export function TrendChart({ storeData, costaAvg, networkAvg, metric, label, for
               vectorEffect="non-scaling-stroke"
             />
 
-            {/* Costa regional avg */}
+            {/* Costa avg — mid blue */}
             <polyline
               points={toPoints(costaAvg)}
               fill="none"
-              stroke="#d1d5db"
+              stroke={COSTA_BLUE}
               strokeWidth="1.2"
               vectorEffect="non-scaling-stroke"
             />
 
-            {/* This store — primary line */}
-            <polyline
-              points={toPoints(storeData)}
-              fill="none"
-              stroke="#004851"
-              strokeWidth="2"
-              vectorEffect="non-scaling-stroke"
-            />
+            {/* This store — RAG-coloured segments */}
+            {storeSegments.map((seg, i) => (
+              <line
+                key={i}
+                x1={seg.x1} y1={seg.y1} x2={seg.x2} y2={seg.y2}
+                stroke={seg.colour}
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                vectorEffect="non-scaling-stroke"
+              />
+            ))}
 
-            {/* Dots on store line */}
+            {/* Dots on store line — RAG coloured */}
             {storeData.map((d, i) => {
               const x = (i / (storeData.length - 1)) * chartW;
               const y = toY(d[metric]);
+              const colour = ragColour(d[metric], networkAvg[i][metric], lowerIsBetter);
               return (
-                <circle key={i} cx={x} cy={y} r="1.5" fill="#004851" vectorEffect="non-scaling-stroke" />
+                <circle key={i} cx={x} cy={y} r="1.8" fill={colour} vectorEffect="non-scaling-stroke" />
               );
             })}
           </svg>
@@ -115,12 +147,16 @@ export function TrendChart({ storeData, costaAvg, networkAvg, metric, label, for
       {/* Legend */}
       <div className="mt-2 flex items-center gap-4 text-[11px]">
         <span className="flex items-center gap-1.5">
-          <span className="h-0.5 w-4 rounded bg-[#004851]" />
-          <span className="text-gray-600">This store</span>
+          <span className="flex gap-0.5">
+            <span className="h-2 w-2 rounded-full bg-[#16a34a]" />
+            <span className="h-2 w-2 rounded-full bg-[#d97706]" />
+            <span className="h-2 w-2 rounded-full bg-[#dc2626]" />
+          </span>
+          <span className="text-gray-600">This store (RAG)</span>
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-0.5 w-4 rounded bg-gray-300" />
-          <span className="text-gray-400">Costa NW avg</span>
+          <span className="h-0.5 w-4 rounded" style={{ backgroundColor: COSTA_BLUE }} />
+          <span className="text-gray-400">Costa avg</span>
         </span>
         <span className="flex items-center gap-1.5">
           <span className="h-0.5 w-4 rounded border-t border-dashed border-gray-400" style={{ width: 16 }} />
