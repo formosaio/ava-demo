@@ -81,36 +81,61 @@ export function DashboardLayout() {
         {/* Sticky header */}
         <div
           className={`sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white/95 backdrop-blur-sm transition-all duration-300 ease-out ${
-            scrolled ? "px-6 py-2" : "px-6 py-3.5"
+            scrolled ? "px-6 py-2.5" : "px-6 py-4"
           }`}
         >
+          {/* Left: logo + region */}
           <div className="flex items-center gap-4">
             <QuinyxLogo
               fill="#004851"
-              width={scrolled ? 80 : 100}
-              height={scrolled ? 20 : 25}
+              height={scrolled ? 22 : 28}
               className="transition-all duration-300 ease-out"
             />
-            {scrolled && (
-              <span className="animate-fade-in text-[13px] font-medium text-gray-400">
-                North West region
-              </span>
-            )}
+            <div className="h-5 w-px bg-gray-200" />
+            <span className="text-[13px] font-medium text-gray-400">
+              North West region
+            </span>
           </div>
-          <div className="flex items-center gap-3">
-            {scrolled && (
-              <>
-                <span className="animate-fade-in rounded-full bg-quinyx/10 px-2.5 py-1 text-[11px] font-medium text-quinyx">
-                  6 stores
-                </span>
-                <span className={`animate-fade-in rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 ${
-                  hasHighAlert ? "animate-alert-pulse" : ""
-                }`}>
-                  {alertCount} alert{alertCount !== 1 ? "s" : ""}
-                </span>
-              </>
-            )}
-            <span className={`text-gray-400 transition-all duration-300 ${scrolled ? "text-[11px]" : "text-[12px]"}`}>
+
+          {/* Right: compact KPIs + badges + date */}
+          <div className="flex items-center gap-4">
+            {/* Compact KPIs — always visible */}
+            <div className="flex items-center gap-4">
+              <KpiChip
+                label="Labour"
+                value={`${REGION_SUMMARY.totalLabourCostPct}%`}
+                good={REGION_SUMMARY.totalLabourCostPct < NETWORK_BENCHMARKS.avgLabourCostPct}
+              />
+              <KpiChip
+                label="Fill rate"
+                value={`${REGION_SUMMARY.scheduleFillRate}%`}
+                good={REGION_SUMMARY.scheduleFillRate >= 95}
+              />
+              <KpiChip
+                label="Compliance"
+                value={`${REGION_SUMMARY.overallComplianceScore}`}
+                good={REGION_SUMMARY.overallComplianceScore >= NETWORK_BENCHMARKS.avgComplianceScore}
+              />
+              <KpiChip
+                label="Turnover"
+                value={`${REGION_SUMMARY.overallTurnover90d}%`}
+                good={REGION_SUMMARY.overallTurnover90d <= NETWORK_BENCHMARKS.avgTurnover90d}
+              />
+            </div>
+
+            <div className="h-5 w-px bg-gray-200" />
+
+            {/* Badges */}
+            <span className="rounded-full bg-quinyx/10 px-2.5 py-1 text-[11px] font-medium text-quinyx">
+              6 stores
+            </span>
+            <span className={`rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 ${
+              hasHighAlert ? "animate-alert-pulse" : ""
+            }`}>
+              {alertCount} alert{alertCount !== 1 ? "s" : ""}
+            </span>
+
+            <span className="text-[11px] text-gray-400">
               {today}
             </span>
           </div>
@@ -174,6 +199,17 @@ export function DashboardLayout() {
       <div className="w-[340px] flex-shrink-0 border-l border-gray-100">
         <EmployerChatSidebar ref={chatRef} onHighlight={handleHighlight} />
       </div>
+    </div>
+  );
+}
+
+function KpiChip({ label, value, good }: { label: string; value: string; good: boolean }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="text-[11px] text-gray-400">{label}</span>
+      <span className={`text-[13px] font-semibold tabular-nums ${good ? "text-green-600" : "text-amber-600"}`}>
+        {value}
+      </span>
     </div>
   );
 }

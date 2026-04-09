@@ -1,17 +1,21 @@
 interface QuinyxLogoProps {
   className?: string;
   fill?: string;
-  width?: number;
   height?: number;
 }
 
-export function QuinyxLogo({ className, fill = "#004851", width = 112, height = 28 }: QuinyxLogoProps) {
+export function QuinyxLogo({ className, fill = "#004851", height = 24 }: QuinyxLogoProps) {
+  // Content spans x:9–103, y:43–68 in the original 112x112 viewBox.
+  // Cropped viewBox with small padding: 7 41 98 28 → aspect ratio ~3.5:1
+  const aspectRatio = 98 / 28;
+  const width = Math.round(height * aspectRatio);
+
   return (
     <svg
       className={className}
       width={width}
       height={height}
-      viewBox="0 0 112 112"
+      viewBox="7 41 98 28"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
