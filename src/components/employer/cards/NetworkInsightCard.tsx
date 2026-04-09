@@ -13,7 +13,7 @@ export function NetworkInsightCard({ data }: { data: NetworkInsightCardData }) {
     <div className="rounded-lg border border-gray-200 bg-white p-3">
       {/* Icon + badge row */}
       <div className="flex items-center gap-1.5">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0F6E56" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#004851" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
           <path d="M12 16v-4M12 8h.01" />
         </svg>

@@ -9,8 +9,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-quinyx: #0F6E56;
+  --color-quinyx: #004851;
   --font-sans: var(--font-geist-sans);
+  --font-poppins: var(--font-poppins);
 }
 
 body {
@@ -161,7 +162,7 @@ body {
 
 .animate-click-flash {
   animation: click-flash 400ms ease-out;
-  border-color: #0F6E56 !important;
+  border-color: #004851 !important;
 }
 
 /* ── Vignette overlay for fullscreen ─────────────────────────── */

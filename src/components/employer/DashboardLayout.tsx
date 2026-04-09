@@ -10,6 +10,7 @@ import {
   REGION_SUMMARY,
 } from "@/data/james-world";
 import { getFormattedDate } from "@/data/sarah-world";
+import { QuinyxLogo } from "./QuinyxLogo";
 import { MetricCards } from "./MetricCards";
 import { StoreTable } from "./StoreTable";
 import { CompliancePanel } from "./CompliancePanel";
@@ -22,6 +23,8 @@ export function DashboardLayout() {
   const chatRef = useRef<EmployerChatHandle>(null);
   const [highlightSlug, setHighlightSlug] = useState<string | null>(null);
   const [drillDownStore, setDrillDownStore] = useState<StoreData | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const handleHighlight = useCallback((slug: string | null) => {
     setHighlightSlug(slug);
@@ -43,6 +46,17 @@ export function DashboardLayout() {
     setDrillDownStore(store);
   }
 
+  // Track scroll for sticky header shrink
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    function onScroll() {
+      setScrolled((el?.scrollTop ?? 0) > 20);
+    }
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
+
   // 'S' shortcut to jump to Arndale drill-down
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -61,19 +75,49 @@ export function DashboardLayout() {
   const today = getFormattedDate();
 
   return (
-    <div className="relative flex h-full w-full overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm">
+    <div className="relative flex h-full w-full overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm font-[family-name:var(--font-poppins)]">
       {/* LEFT — Dashboard */}
       <div className="relative flex flex-1 flex-col overflow-hidden">
-        {/* Top bar */}
-        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-3.5">
-          <span className="text-[14px] font-medium text-quinyx tracking-wide" style={{ fontWeight: 500 }}>
-            Quinyx
-          </span>
-          <span className="text-[12px] text-gray-400">{today}</span>
+        {/* Sticky header */}
+        <div
+          className={`sticky top-0 z-10 flex items-center justify-between border-b border-gray-100 bg-white/95 backdrop-blur-sm transition-all duration-300 ease-out ${
+            scrolled ? "px-6 py-2" : "px-6 py-3.5"
+          }`}
+        >
+          <div className="flex items-center gap-4">
+            <QuinyxLogo
+              fill="#004851"
+              width={scrolled ? 80 : 100}
+              height={scrolled ? 20 : 25}
+              className="transition-all duration-300 ease-out"
+            />
+            {scrolled && (
+              <span className="animate-fade-in text-[13px] font-medium text-gray-400">
+                North West region
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            {scrolled && (
+              <>
+                <span className="animate-fade-in rounded-full bg-quinyx/10 px-2.5 py-1 text-[11px] font-medium text-quinyx">
+                  6 stores
+                </span>
+                <span className={`animate-fade-in rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 ${
+                  hasHighAlert ? "animate-alert-pulse" : ""
+                }`}>
+                  {alertCount} alert{alertCount !== 1 ? "s" : ""}
+                </span>
+              </>
+            )}
+            <span className={`text-gray-400 transition-all duration-300 ${scrolled ? "text-[11px]" : "text-[12px]"}`}>
+              {today}
+            </span>
+          </div>
         </div>
 
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-6">
           {/* Header */}
           <div className="flex items-start justify-between">
             <div>

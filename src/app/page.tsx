@@ -28,7 +28,7 @@ export default function LauncherPage() {
         >
           {/* Phone icon */}
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-quinyx/10">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0F6E56" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#004851" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="5" y="2" width="14" height="20" rx="3" />
               <path d="M12 18h.01" />
             </svg>
@@ -50,7 +50,7 @@ export default function LauncherPage() {
         >
           {/* Chart icon */}
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-quinyx/10">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0F6E56" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#004851" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 3v18h18" />
               <path d="M7 16l4-8 4 4 4-6" />
             </svg>

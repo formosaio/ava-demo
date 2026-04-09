@@ -19,7 +19,7 @@ export function SwapCard({ data }: { data: SwapCardData }) {
       {/* Header row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0F6E56" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#004851" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M16 3l4 4-4 4" />
             <path d="M20 7H4" />
             <path d="M8 21l-4-4 4-4" />
