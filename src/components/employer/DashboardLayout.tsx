@@ -25,8 +25,10 @@ export function DashboardLayout() {
   const [drillDownStore, setDrillDownStore] = useState<StoreData | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [metricsHidden, setMetricsHidden] = useState(false);
+  const [badgesHidden, setBadgesHidden] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const metricsRef = useRef<HTMLDivElement>(null);
+  const bodyHeaderRef = useRef<HTMLDivElement>(null);
 
   const handleHighlight = useCallback((slug: string | null) => {
     setHighlightSlug(slug);
@@ -55,13 +57,19 @@ export function DashboardLayout() {
     function onScroll() {
       const scrollTop = el?.scrollTop ?? 0;
       setScrolled(scrollTop > 20);
-      // Check if the metrics section has scrolled out of view
-      const metricsEl = metricsRef.current;
-      if (metricsEl) {
-        const rect = metricsEl.getBoundingClientRect();
-        const container = el?.getBoundingClientRect();
-        if (container) {
+      const container = el?.getBoundingClientRect();
+      if (container) {
+        // Check if the metrics section has scrolled out of view
+        const metricsEl = metricsRef.current;
+        if (metricsEl) {
+          const rect = metricsEl.getBoundingClientRect();
           setMetricsHidden(rect.bottom < container.top + 10);
+        }
+        // Check if the body header (with badges) has scrolled out of view
+        const headerEl = bodyHeaderRef.current;
+        if (headerEl) {
+          const rect = headerEl.getBoundingClientRect();
+          setBadgesHidden(rect.bottom < container.top + 10);
         }
       }
     }
@@ -142,15 +150,23 @@ export function DashboardLayout() {
               <div className="h-5 w-px bg-gray-200" />
             </div>
 
-            {/* Badges */}
-            <span className="rounded-full bg-quinyx/10 px-2.5 py-1 text-[11px] font-medium text-quinyx">
-              6 stores
-            </span>
-            <span className={`rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 ${
-              hasHighAlert ? "animate-alert-pulse" : ""
-            }`}>
-              {alertCount} alert{alertCount !== 1 ? "s" : ""}
-            </span>
+            {/* Badges — slide in when body header scrolls out */}
+            <div
+              className={`flex items-center gap-2 transition-all duration-300 ease-out ${
+                badgesHidden
+                  ? "max-w-[200px] opacity-100"
+                  : "max-w-0 opacity-0 overflow-hidden"
+              }`}
+            >
+              <span className="whitespace-nowrap rounded-full bg-quinyx/10 px-2.5 py-1 text-[11px] font-medium text-quinyx">
+                6 stores
+              </span>
+              <span className={`whitespace-nowrap rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 ${
+                hasHighAlert ? "animate-alert-pulse" : ""
+              }`}>
+                {alertCount} alert{alertCount !== 1 ? "s" : ""}
+              </span>
+            </div>
 
             <span className="text-[11px] text-gray-400">
               {today}
@@ -161,7 +177,7 @@ export function DashboardLayout() {
         {/* Scrollable content */}
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-6">
           {/* Header */}
-          <div className="flex items-start justify-between">
+          <div ref={bodyHeaderRef} className="flex items-start justify-between">
             <div>
               <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-wide">North West region</p>
               <h1 className="mt-1 text-[22px] font-semibold text-gray-900">Good morning, James</h1>
