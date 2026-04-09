@@ -24,7 +24,9 @@ export function DashboardLayout() {
   const [highlightSlug, setHighlightSlug] = useState<string | null>(null);
   const [drillDownStore, setDrillDownStore] = useState<StoreData | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [metricsHidden, setMetricsHidden] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const metricsRef = useRef<HTMLDivElement>(null);
 
   const handleHighlight = useCallback((slug: string | null) => {
     setHighlightSlug(slug);
@@ -46,12 +48,22 @@ export function DashboardLayout() {
     setDrillDownStore(store);
   }
 
-  // Track scroll for sticky header shrink
+  // Track scroll for sticky header shrink + metrics visibility
   useEffect(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
     function onScroll() {
-      setScrolled((el?.scrollTop ?? 0) > 20);
+      const scrollTop = el?.scrollTop ?? 0;
+      setScrolled(scrollTop > 20);
+      // Check if the metrics section has scrolled out of view
+      const metricsEl = metricsRef.current;
+      if (metricsEl) {
+        const rect = metricsEl.getBoundingClientRect();
+        const container = el?.getBoundingClientRect();
+        if (container) {
+          setMetricsHidden(rect.bottom < container.top + 10);
+        }
+      }
     }
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
@@ -97,10 +109,16 @@ export function DashboardLayout() {
             </span>
           </div>
 
-          {/* Right: compact KPIs + badges + date */}
+          {/* Right: compact KPIs (when scrolled past body metrics) + badges + date */}
           <div className="flex items-center gap-4">
-            {/* Compact KPIs — always visible */}
-            <div className="flex items-center gap-4">
+            {/* Compact KPIs — slide in when body metrics scroll out of view */}
+            <div
+              className={`flex items-center gap-4 transition-all duration-300 ease-out ${
+                metricsHidden
+                  ? "max-w-[400px] opacity-100"
+                  : "max-w-0 opacity-0 overflow-hidden"
+              }`}
+            >
               <KpiChip
                 label="Labour"
                 value={`${REGION_SUMMARY.totalLabourCostPct}%`}
@@ -121,9 +139,8 @@ export function DashboardLayout() {
                 value={`${REGION_SUMMARY.overallTurnover90d}%`}
                 good={REGION_SUMMARY.overallTurnover90d <= NETWORK_BENCHMARKS.avgTurnover90d}
               />
+              <div className="h-5 w-px bg-gray-200" />
             </div>
-
-            <div className="h-5 w-px bg-gray-200" />
 
             {/* Badges */}
             <span className="rounded-full bg-quinyx/10 px-2.5 py-1 text-[11px] font-medium text-quinyx">
@@ -162,7 +179,7 @@ export function DashboardLayout() {
           </div>
 
           {/* Metrics */}
-          <div className="mt-5">
+          <div ref={metricsRef} className="mt-5">
             <MetricCards summary={REGION_SUMMARY} benchmarks={NETWORK_BENCHMARKS} />
           </div>
 
